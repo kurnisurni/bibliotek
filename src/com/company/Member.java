@@ -26,7 +26,7 @@ ArrayList<Book>borrowedBooks = new ArrayList<>();
         return name;
     }
 
-    public void showLoans() {
+    public void showLoan() {
         //If no loans... don't display anything...
         if (borrowedBooks.size()==0)
             return;
