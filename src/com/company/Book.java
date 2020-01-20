@@ -1,44 +1,41 @@
 package com.company;
 
-public class Book {
+import java.io.Serializable;
+
+public class Book implements Serializable {
     private String title;
-    private String genre;
     private String author;
     private String description;
-    private boolean available;
+    private boolean available = true;
 
-    public Book(String title, String genre, String author, String description) {
+    public Book(String title, String author, String description) {
         this.title = title;
-        this.genre = genre;
         this.author = author;
         this.description = description;
-        setAvailable(true);
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public boolean getAvailable() {
-        return available;
+    public String getAuthor() {
+        return author;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     @Override
     public String toString() {
-        return "Book{" +
-                "title='" + title + '\'' +
-                ", genre='" + genre + '\'' +
-                ", author='" + author + '\'' +
-                ", description='" + description + '\'' +
-                ", available=" + available +
-                '}';
+        return "Book with title '" + title + "' by " + author;
     }
 }

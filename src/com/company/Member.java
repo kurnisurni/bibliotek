@@ -2,15 +2,16 @@ package com.company;
 
 import java.util.ArrayList;
 
-public class Member {
-    private String name;
-ArrayList<Book>borrowedBooks = new ArrayList<>();
+public class Member extends User {
+    ArrayList<Book> borrowedBooks = new ArrayList<>();
 
-    public Member(String name) {
-        this.name = name;
+    public Member(String userName, int id, String password, String userType, ArrayList<Book> borrowedBooks) {
+        super(userName, id, password, userType);
+        this.borrowedBooks = borrowedBooks;
     }
+}
 
-    public void addLoan(Book book){
+    /*public void addLoan(Book book){
         borrowedBooks.add(book);
         book.setAvailable(false);
     }
@@ -46,5 +47,5 @@ ArrayList<Book>borrowedBooks = new ArrayList<>();
                 return;
             }
         }
-    }
-}
+    }*/
+
