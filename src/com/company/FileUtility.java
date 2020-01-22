@@ -1,5 +1,6 @@
 package com.company;
 
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -45,5 +46,18 @@ public class FileUtility {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void writeObject(Object object, String fileName) {
+        ObjectOutputStream objectOutputStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(fileName, false);
+            objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(object);
+            objectOutputStream.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

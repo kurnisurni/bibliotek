@@ -9,9 +9,9 @@ public class Member extends User {
         super(userName, id, password, userType);
         this.borrowedBooks = borrowedBooks;
     }
-}
 
-    /*public void addLoan(Book book){
+
+    public void addLoan(Book book){
         borrowedBooks.add(book);
         book.setAvailable(false);
     }
@@ -19,12 +19,12 @@ public class Member extends User {
     @Override
     public String toString() {
         return "Member{" +
-                "name='" + name + '\'' +
+                "name='" + getUserName() + '\'' +
                 '}';
     }
 
     public String getName() {
-        return name;
+        return getUserName();
     }
 
     public void showLoan() {
@@ -47,5 +47,6 @@ public class Member extends User {
                 return;
             }
         }
-    }*/
+    }
+}
 
