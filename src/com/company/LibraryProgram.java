@@ -136,7 +136,7 @@ start();
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Wrong input. Please, enter a number between 0 to 6");
+                    System.out.println("Wrong input. Please, enter a number between 0 to 5");
             }
         }
     }
@@ -264,7 +264,7 @@ start();
             }
         }
         System.out.println("Book is not found.");
-        return null ;
+        return null;
     }
 
     void addBookToLibrary(ArrayList<Book> books, String title, String author, String description) {
@@ -274,7 +274,7 @@ start();
 
     void addMemberToLibrary(String memberName, String memberPassword) {
         members.add(new Member(memberName, memberPassword));
-        System.out.println(memberName + " added to the library systema");
+        System.out.println(memberName + " added to the library system");
     }
 
     public void allMembers(ArrayList<Member> members) {
