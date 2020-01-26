@@ -2,7 +2,6 @@ package com.company;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class User implements Serializable {
     private String userName;

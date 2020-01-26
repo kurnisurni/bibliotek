@@ -1,18 +1,16 @@
 package com.company;
 
-import javax.swing.*;
+
 import java.io.File;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class LibraryProgram {
+public class LibraryProgram implements Serializable {
     private ArrayList<Book> books = new ArrayList<>();
-    private ArrayList<Book> borrowedBooks = new ArrayList<>();
     private ArrayList<Member> members = new ArrayList<>();
-    private ArrayList<Librarian> librarians = new ArrayList<>();
-    private Librarian currentLibrarian;
     private Member currentMember;
     private transient Scanner scanner = new Scanner(System.in);
 
@@ -44,8 +42,8 @@ start();
         books.add(new Book("The Da Vinci Code", "Dan Brown", "The Da Vinci Code follows 'symbologist' Robert Langdon and cryptologist Sophie Neveu after a murder in the Louvre Museum in Paris causes them to become involved in a battle between the Priory of Sion and Opus Dei over the possibility of Jesus Christ having been a companion to Mary Magdalene. The novel explores an alternative religious history, whose central plot point is that the Merovingian kings of France were descended from the bloodline of Jesus Christ and Mary Magdalene."));
         books.add(new Book("The Alchemist", "Paulo Coelho", "An allegorical novel, The Alchemist follows a young Andalusian shepherd in his journey to the pyramids of Egypt, after having a recurring dream of finding a treasure there."));
         books.add(new Book("The Lion, the Witch and the Wardrobe", "C. S. Lewis", "Most of the novel is set in Narnia, a land of talking animals and mythical creatures that is ruled by the evil White Witch. In the frame story, four English children are relocated to a large, old country house following a wartime evacuation. The youngest, Lucy, visits Narnia three times via the magic of a wardrobe in a spare room. Lucy's three siblings are with her on her third visit to Narnia. In Narnia, the siblings seem fit to fulfill an old prophecy and find themselves adventuring to save Narnia and their own lives. The lion Aslan gives his life to save one of the children; he later rises from the dead, vanquishes the White Witch, and crowns the children Kings and Queens of Narnia."));
-        members.add(new Member("kurnia", "123"));
-        librarians.add(new Librarian("librarian", "123"));
+        members.add(new Member("Bibi", "123"));
+        members.add(new Member("Bobo", "123"));
     }
 
 
@@ -59,17 +57,21 @@ start();
             System.out.println("Please select the menu: ");
             System.out.println("1. Member");
             System.out.println("2. Librarian");
-            System.out.println("3. Exit");
+            System.out.println("0. Exit");
 
             String choice = scanner.nextLine();
             switch (choice) {
                 case "1":
                     memberLogIn();
+                    FileUtility.writeObject(this, "library.ser");
                     break;
                 case "2":
-                    librarian();
+                    librarian(books);
+                    FileUtility.writeObject(this, "library.ser");
+                    System.exit(0);
                     break;
                 case "0":
+                    FileUtility.writeObject(this, "library.ser");
                     System.out.println("Goodbye!");
                     running = false;
                     break;
@@ -179,19 +181,15 @@ start();
     }
 
 
-    public void librarian() {
+    public void librarian(ArrayList<Book> libraryBooks) {
         Scanner scanner = new Scanner(System.in);
-        boolean running = true;
-
-        while (running) {
-            System.out.println("Hi, librarian! \n Please, select the menu:\n");
-            //System.out.println("1. Search a member");
-            //System.out.println("2. Add a member");
-            //System.out.println("3. See borrowed books");
-            System.out.println("1. Add a new book");
-            System.out.println("2. Remove a book");
-            System.out.println("0. Save and exit");
-
+        boolean isRunning = true;
+        while (isRunning) {
+            System.out.println("Hi, librarian! Please, select the menu: ");
+            System.out.println("1. Add new book");
+            System.out.println("2. Remove book");
+            System.out.println("3. See all books");
+            System.out.println("0. Save & Exit");
             String librarianChoice = scanner.nextLine();
             switch (librarianChoice) {
                 case "1":
@@ -200,58 +198,69 @@ start();
                     System.out.println("Enter Author: ");
                     String author = scanner.nextLine();
                     System.out.println("Enter Summary: ");
-                    String description = scanner.nextLine();
-                    currentLibrarian.addBookToLibrary(books, title, author, description);
+                    String summary = scanner.nextLine();
+                    addBookToLibrary(libraryBooks, title, author, summary);
                     break;
-                //findMember(null);
                 case "2":
-                    currentLibrarian.printAllLibraryBooks(books);
+                    printAllLibraryBooks(libraryBooks);
                     System.out.println("Enter Title: ");
-                    String bookTitleToRemove = scanner.nextLine();
-                    currentLibrarian.removeBookFromLibrary(bookTitleToRemove, books);
+                    String bookToRemoveTitle = scanner.nextLine();
+                    removeBookFromLibrary(bookToRemoveTitle, libraryBooks);
                     break;
-
-                //addMember();
-
                 case "3":
-                    //seeBorrowedBooks();
-                    break;
-                case "4":
-                    //removeBook();
-                    break;
-                case "5":
-                    //addNewBook();
+                    printAllLibraryBooks(libraryBooks);
                     break;
                 case "0":
-                    System.out.println("Goodbye!");
+                    System.out.println("You are successfully exit the system!");
+                    isRunning = false;
                     break;
                 default:
-                    System.out.println("Wrong input. Please, enter a number between 0 to 2");
+                    System.out.println("Wrong input. Please, enter a number between 0 to 3");
                     break;
             }
         }
-
-
-/*private void getUsersFromFile(){
-    Path file = new File("saveAccount.ser").toPath();
-    if (Files.exists(file)) {
-        LibraryProgram libraryFromFile = (LibraryProgram) FileUtility.readObject("saveAccount.ser");
-        this.members = libraryFromFile.members;
-    } else {
-        addUserToLibraryList();
     }
-}
 
-private void addUserToLibraryList(){
-members.add(new Member("kurnia","123"));
-}*/
+    void printAllLibraryBooks(ArrayList<Book> books) {
+        for (Book book : books) {
+            System.out.println(book);
+            System.out.println(book.getDescription());
+            System.out.println("------------------------------------------");
+        }
+    }
 
+    void removeBookFromLibrary(String title, ArrayList<Book> libraryBooks) {
+        Book book = findBookByTitleAuthor(title, libraryBooks);
+        libraryBooks.remove(book);
+        System.out.println(book.getTitle() + " is removed.");
+    }
 
+    private Book findBookByTitleAuthor(String title, ArrayList<Book> books) {
+        for(Book book:books){
+            if(book==null){
+                continue;
+            }
+            if(book.getTitle().toLowerCase().contains(title.toLowerCase()) || book.getAuthor().toLowerCase().contains(title.toLowerCase())){
+                return book;
+            }
+        }
+        System.out.println("Book is not found.");
+        return null ;
+    }
 
+    void addBookToLibrary(ArrayList<Book> books, String title, String author, String description) {
+        books.add(new Book(title, author, description));
+        System.out.println(title + " added to library collection");
+    }
 
 
     }
-}
+
+
+
+
+
+
 
 
 
