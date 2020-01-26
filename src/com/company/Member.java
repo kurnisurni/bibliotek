@@ -5,9 +5,8 @@ import java.util.ArrayList;
 public class Member extends User {
     ArrayList<Book> borrowedBooks = new ArrayList<>();
 
-    public Member(String userName, int id, String password, String userType, ArrayList<Book> borrowedBooks) {
-        super(userName, id, password, userType);
-        this.borrowedBooks = borrowedBooks;
+    public Member(String userName, String password) {
+        super(userName, password);
     }
 
 
@@ -48,5 +47,23 @@ public class Member extends User {
             }
         }
     }
+
+    public void memberBorrowBook(Book book) {
+            if (book != null && book.isAvailable()) {
+                borrowedBooks.add(book);
+                book.setAvailable(false);
+                System.out.println(getName() + " borrows a book with title " + book.getTitle());
+            } else {
+                System.out.println("Error! " + getName()+ " could not borrow " + book.getTitle());
+            }
+    }
+
+    public void memberReturnBook(Book book) {
+        borrowedBooks.remove(book);
+        book.setAvailable(true);
+        System.out.println(book.getTitle() + " returned to library");
+    }
+
+
 }
 

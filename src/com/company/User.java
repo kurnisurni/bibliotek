@@ -1,38 +1,44 @@
 package com.company;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class User implements Serializable {
     private String userName;
-    private int id;
     private String password;
-    private String userType;
 
-    public User(String userName, int id, String password, String userType) {
+    public User(String userName, String password) {
         this.userName = userName;
-        this.id = id;
         this.password = password;
-        this.userType = userType;
     }
 
     public String getUserName() {
         return userName;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public String getUserType() {
-        return userType;
+//Method to search for a book for library member and librarian
+Book findBookByTitleAuthor(String title, ArrayList<Book> books){
+    for(Book book:books){
+        if(book==null){
+            continue;
+        }
+        if(book.getTitle().contains(title) || book.getAuthor().contains(title)){
+            return book;
+        }
     }
+    System.out.println("Book is not found.");
+    return null;
+}
+
+
 
     @Override
     public String toString() {
-        return "User: " + userName + ", id=" + id + ", userType='" + userType;
+        return "Username= " + userName + ", password= " + password;
     }
 }

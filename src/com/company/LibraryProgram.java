@@ -1,5 +1,8 @@
 package com.company;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,12 +11,14 @@ public class LibraryProgram {
     private ArrayList<Book> borrowedBooks = new ArrayList<>();
     private ArrayList<Member> members = new ArrayList<>();
     private Librarian currentLibrarian;
+    private Member currentMember;
     private transient Scanner scanner = new Scanner(System.in);
 
 
     public void start() {
-renderBookListFromFile();
-renderMembersFromFile();
+        getUsers();
+//renderBookListFromFile();
+//renderMembersFromFile();
 
         boolean running = true;
         System.out.println("Welcome to OOP-Java library");
@@ -25,10 +30,10 @@ renderMembersFromFile();
             System.out.println("2. Librarian");
             System.out.println("3. Exit");
 
-            String choice = scanner.next();
+            String choice = scanner.nextLine();
             switch (choice) {
                 case "1":
-                    member();
+                    memberLogIn();
                     break;
                 case "2":
                     librarian();
@@ -43,18 +48,36 @@ renderMembersFromFile();
         }
     }
 
-    private void member() {
+    private void memberLogIn(){
+        System.out.println("Hi! Please, log in as a member to continue.. ");
+        System.out.println("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.println("Enter password:");
+        String password = scanner.nextLine();
+        for (User member : members) {
+            if (username.equals(member.getUserName()) && password.equals(member.getPassword())) {
+                 if (member instanceof Member) {
+                    System.out.println("Welcome back, " + username + "!");
+                    currentMember = (Member) member;
+                    memberMenu();
+                    break;
+                }
+            }
+        }
+        System.out.println("Password or username incorrect. Try again.");
+    }
+
+    private void memberMenu() {
         boolean running = true;
 
         while (running) {
-            System.out.println("Hi, member! \n Please, select the menu:\n");
+            System.out.println("Please, select the menu:\n-----------------------------");
             System.out.println("1. See all the books");
             System.out.println("2. See all the available books");
-            System.out.println("3. See a book's information");
-            System.out.println("4. Search for a book");
-            System.out.println("5. Borrow a book");
-            System.out.println("6. My borrowed books account");
-            System.out.println("7. Return a book");
+            System.out.println("3. Search for a book");
+            System.out.println("4. Borrow a book");
+            System.out.println("5. My loaned books");
+            System.out.println("6. Return a book");
             System.out.println("0. Save and exit");
 
 
@@ -67,18 +90,16 @@ renderMembersFromFile();
                     showAvailableBooks();
                     break;
                 case "3":
-                    //bookInformation();
-                    break;
-                case "4":
+                    System.out.println("Please, enter a book title or author");
                     searchForBook();
                     break;
-                case "5":
+                case "4":
                     borrowBook();
                     break;
-                case "6":
-                    showMyBookAccount();
+                case "5":
+                    myLoanedBooks();
                     break;
-                case "7":
+                case "6":
                     returnBook();
                     break;
                 case "0":
@@ -87,7 +108,7 @@ renderMembersFromFile();
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Wrong input. Please, enter a number between 0 to 7");
+                    System.out.println("Wrong input. Please, enter a number between 0 to 6");
             }
         }
     }
@@ -95,6 +116,8 @@ renderMembersFromFile();
 private void showAllBooks(ArrayList<Book> books){
 for(Book book:books){
     System.out.println(book);
+    System.out.println(book.getDescription());
+    System.out.println("---------------------------------------------------------------");
 }
 }
 
@@ -106,70 +129,53 @@ if(book.isAvailable()){
 }
 }
 
-private Book findBookByTitleAuthor(String title, String author){
-for(Book book:books){
-    if(book==null){
-        continue;
-    }
-    if(book.getTitle().equals(title) || book.getAuthor().equals(author)){
-        return book;
-    }
-}
-    System.out.println("Book is not found.");
-   return null;
-}
-
-private void searchForBook(){
-Scanner scanner = new Scanner(System.in);
-    System.out.println("Please, enter a book title or author:");
-    String bookTitle = scanner.nextLine();
-    String bookAuthor = scanner.nextLine();
-Book book = findBookByTitleAuthor(bookTitle, bookAuthor);
-    if (book == null){
-        System.out.println("Sorry, " + bookTitle + "is not found.");
-    } else{
-        System.out.println(book);
-    }
-}
-
-public void borrowBook(String userName, String title){
-    Member member = Member(userName);
-    //Check if we find member with this name...
-    if (member != null) {
-        for (Book book : books) {
-            if ( book.getTitle().equals(title) &&
-                    book.isAvailable()){
-                member.addLoan(book);
-                System.out.println(member.getName()+" borrowed the item with title "+book.getTitle());
-                return; //we're done... return!
-            }
+    private void searchForBook(){
+            String searchedBook = scanner.nextLine();
+        Book book = currentMember.findBookByTitleAuthor(searchedBook, books);
+        if (book == null){
+            System.out.println("Sorry, " + searchedBook + "is not found.");
+        } else{
+            System.out.println(book);
+            System.out.println("Description: ");
+            System.out.println(currentMember.findBookByTitleAuthor(searchedBook, books).getDescription());
         }
     }
-    //Something went wrong...
-    System.out.println(member.getName()+" could not borrow "+title);
+
+
+public void borrowBook(){
+    showAvailableBooks();
+    System.out.println("Please, enter a book title or author:");
+    String titleOrAuthor = scanner.nextLine();
+    currentMember.findBookByTitleAuthor(titleOrAuthor, books);
+    currentMember.memberBorrowBook(currentMember.findBookByTitleAuthor(titleOrAuthor, books));
+
 }
 
-public void showMyBookAccount(){
-//If no loans... don't display anything...
-    if (borrowedBooks.size()==0)
-        return;
-    for (Book book : borrowedBooks){
-        System.out.println(book);
+public void myLoanedBooks() {
+
+    if (borrowedBooks.size() == 0) {
+        for (Book book : borrowedBooks) {
+            System.out.println(book);
+        }
+    } else {
+        System.out.println("You have not borrow a book, yet..");
     }
     System.out.println("--------------");
 }
 
-public void returnBook(){
-    for (Book book : borrowedBooks){
-        if (book.getTitle().equals(title)){
-            borrowedBooks.remove(book);
-            book.setAvailable(true);
-            return;
-        }
+
+public void returnBook() {
+    myLoanedBooks();
+    if (borrowedBooks.isEmpty()) {
+        System.out.println("Book could not be found.");
+    } else {
+        System.out.println("Which book you will return? Please, enter the book title: ");
+        String bookTitle = scanner.nextLine();
+        currentMember.memberReturnBook(currentMember.findBookByTitleAuthor(bookTitle, borrowedBooks));
     }
 }
 
-    private void librarian() {
+    private void librarian () {
         boolean running = true;
 
         while (running) {
@@ -183,23 +189,22 @@ public void returnBook(){
 
         }
 
-
         String librarianChoice = scanner.next();
         switch (librarianChoice) {
             case "1":
-                findMember(null);
+                //findMember(null);
                 break;
             case "2":
-                addMember();
+                //addMember();
                 break;
             case "3":
-                seeBorrowedBooks();
+                //seeBorrowedBooks();
                 break;
             case "4":
-                removeBook();
+                //removeBook();
                 break;
             case "5":
-                addNewBook();
+                //addNewBook();
                 break;
             case "0":
                 System.out.println("Goodbye!");
@@ -209,7 +214,24 @@ public void returnBook(){
         }
     }
 
-    //Find a certain member of the library. If not found, return null.
+private void getUsers(){
+    Path file = new File("user.ser").toPath();
+    if (Files.exists(file)) {
+        LibraryProgram libraryFromFile = (LibraryProgram) FileUtility.readObject("user.ser");
+        this.members = libraryFromFile.members;
+    } else {
+        addUserToLibraryList();
+    }
+}
+
+private void addUserToLibraryList(){
+members.add(new Member("kurnia","123"));
+}
+
+}
+
+
+  /*  //Find a certain member of the library. If not found, return null.
     private Member findMember(String name){
         for (Member member : members){
             if (member.getName().equals(name)){
@@ -257,54 +279,7 @@ public void renderMembersFromFile(){
 members =(ArrayList<Member>)FileUtility.loadObject("members.ser");
 }
 }
-
-
-
-
-/*
-    //Return a book with this title for this member...
-    public void returnBook(String memberName, String title) {
-        Member member = findMember(memberName);
-        if (member != null) {
-            member.returnLoan(title);
-            System.out.println(member.getName()+" returned the item with title "+title);
-        }
-    }
-
-    //Assuming that title is unique in all books list, this method will borrow any kind of book.
-    public void borrowItem(
-            String memberName,
-            String title) {
-
-        Member member = findMember(memberName);
-        //Check if we find member with this name...
-        if (member != null) {
-            for (Book book : books) {
-                if ( book.getTitle().equals(title) &&
-                        book.getAvailable()
-                ){
-                    member.addLoan(book);
-                    System.out.println(member.getName()+" borrowed the item with title "+book.getTitle());
-                    return; //we're done... return!
-                }
-            }
-        }
-        //Something went wrong...
-        System.out.println(member.getName()+" could not borrow "+title);
-    }
-
-
-    //Show all books
-    public void showBooks() {
-        for (Book book : books){
-            if ( book instanceof Book){
-                System.out.println(book);
-            }
-        }
-    }*/
-
-
-
+*/
 
 
 

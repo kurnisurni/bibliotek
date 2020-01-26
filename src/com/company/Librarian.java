@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Librarian extends User {
 
-    public Librarian(String userName, int id, String password, String userType) {
-        super(userName, id, password, userType);
+   public Librarian(String userName, String password) {
+        super(userName, password);
     }
 }
     /*
