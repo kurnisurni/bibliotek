@@ -1,74 +1,86 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Librarian extends User {
 
    public Librarian(String userName, String password) {
-        super(userName, password);
+            super(userName, password);
+        }
+
+    public void librarian(ArrayList<User> members, ArrayList<Book> libraryBooks) {
+        Scanner scanner = new Scanner(System.in);
+        boolean isRunning = true;
+        while (isRunning) {
+            System.out.println("\"Hi, librarian! \\n Please, select the menu:\\n\"");
+            System.out.println("1. Add new book");
+            System.out.println("2. Remove book");
+            System.out.println("3. See all books");
+            System.out.println("4. See borrowed books");
+            System.out.println("0. Save & Exit");
+            String librarianChoice = scanner.nextLine();
+            switch (librarianChoice) {
+                case "1":
+                    System.out.println("Enter Title: ");
+                    String title = scanner.nextLine();
+                    System.out.println("Enter Author: ");
+                    String author = scanner.nextLine();
+                    System.out.println("Enter Summary: ");
+                    String summary = scanner.nextLine();
+                    addBookToLibrary(libraryBooks, title, author, summary);
+                    break;
+                case "2":
+                    printAllLibraryBooks(libraryBooks);
+                    System.out.println("Enter Title: ");
+                    String bookToRemoveTitle = scanner.nextLine();
+                    removeBookFromLibrary(bookToRemoveTitle, libraryBooks);
+                    break;
+                case "3":
+                        printAllLibraryBooks(libraryBooks);
+                    break;
+                case "4":
+                    seeBorrowedBooks(libraryBooks);
+                    break;
+                case "0":
+                    System.out.println("You are successfully exit the system!");
+                    isRunning = false;
+                    break;
+                default:
+                    System.out.println("Incorrect input. Try again.");
+                    break;
+            }
+        }
+    }
+
+    void printAllLibraryBooks(ArrayList<Book> books) {
+        for (Book book : books) {
+            System.out.println(book);
+            System.out.println(book.getDescription());
+            System.out.println("------------------------------------------");
+        }
+    }
+
+    void removeBookFromLibrary(String title, ArrayList<Book> libraryBooks) {
+        Book book = findBookByTitleAuthor(title, libraryBooks);
+        libraryBooks.remove(book);
+        System.out.println(book.getTitle() + " is removed.");
+    }
+
+    void addBookToLibrary(ArrayList<Book> books, String title, String author, String description) {
+        books.add(new Book(title, author, description));
+        System.out.println(title + " added to library collection");
+    }
+
+    private void seeBorrowedBooks(ArrayList<Book> books) {
+        for (Book book : books) {
+            if (!book.isAvailable()) {
+                System.out.println(book);
+            } else {
+                System.out.println("No books has been borrowed.");
+                break;
+            }
+        }
     }
 }
-    /*
-    //Show all members
-    public void showMembers(){
-        for (Member member: members){
-            System.out.println(member);
-        }
-    }
-
-    //Find a certain member of the library. If not found, return null.
-    private Member findMember(String name){
-        for (Member member : members){
-            if (member.getName().equals(name)){
-                return member;
-            }
-        }
-        return null;
-    }
-
-    //Show all the loans of a certain member
-    public void showMemberLoans(String memberName) {
-        Member member = findMember(memberName);
-        if (member != null) {
-            member.showLoan();
-        }
-    }
-
-    public void showAllMemberLoans(){
-        //loop through all members...
-        for (Member member: members){
-            showMemberLoans(member.getName()); //and show all loans for each member...
-        }
-    }
-
-    //A method to add new book to the library
-    public void addBookToLibrary(Book newBook){
-        books.add( newBook );
-    }
-
-    //Add members to the library
-    public void addMember(String name){
-        members.add( new Member(name));
-    }
-
-    public void showBorrowedBooks(){
-        for (Book book : books){
-            if (!book.getAvailable()){
-                System.out.println(book);
-            }
-        }
-    }
-
-    public void showAvailableBooks(){
-        for (Book book : books){
-            if (book.getAvailable()){
-                System.out.println(book);
-            }
-        }
-    }
-
-    public void removeBookFromLibrary(Book removedBook){
-        books.remove(removedBook);
-    }*/
-
 

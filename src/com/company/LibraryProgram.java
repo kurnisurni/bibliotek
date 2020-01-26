@@ -1,5 +1,6 @@
 package com.company;
 
+import javax.swing.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,15 +11,45 @@ public class LibraryProgram {
     private ArrayList<Book> books = new ArrayList<>();
     private ArrayList<Book> borrowedBooks = new ArrayList<>();
     private ArrayList<Member> members = new ArrayList<>();
+    private ArrayList<Librarian> librarians = new ArrayList<>();
     private Librarian currentLibrarian;
     private Member currentMember;
     private transient Scanner scanner = new Scanner(System.in);
 
+public LibraryProgram(){
+        renderBookAndUser();
+start();
+    }
 
-    public void start() {
-        getUsers();
-//renderBookListFromFile();
-//renderMembersFromFile();
+    private void renderBookAndUser() {
+        Path file = new File("library.ser").toPath();
+        if (Files.exists(file)) {
+            LibraryProgram libraryFromFile = (LibraryProgram) FileUtility.readObject("library.ser");
+            this.books = libraryFromFile.books;
+            this.members = libraryFromFile.members;
+        } else {
+            addBookUserToLibrary();
+        }
+    }
+
+    private void addBookUserToLibrary() {
+        books.add(new Book("The Lord of the Rings", "J. R. R. Tolkien", "Thousands of years before the events of the novel, the Dark Lord Sauron had forged the One Ring to rule the other Rings of Power and corrupt those who wore them: three for Elves, seven for Dwarves, and nine for Men. Sauron was defeated by an alliance of Elves and Men led by Gil-galad and Elendil, respectively. In the final battle, Isildur, son of Elendil, cut the One Ring from Sauron's finger, causing Sauron to lose his physical form. Isildur claimed the Ring as an heirloom for his line, but when he was later ambushed and killed by the Orcs, the Ring was lost in the River Anduin."));
+        books.add(new Book("The Little Prince", "Antoine de Saint-Exupéry", "The story follows a young prince who visits various planets in space, including Earth, and addresses themes of loneliness, friendship, love, and loss. Despite its style as a children's book, The Little Prince makes poignant observations about life and human nature."));
+        books.add(new Book("Harry Potter and the Philosopher's Stone", "J. K. Rowling", "The first novel in the Harry Potter series and Rowling's debut novel, it follows Harry Potter, a young wizard who discovers his magical heritage on his eleventh birthday, when he receives a letter of acceptance to Hogwarts School of Witchcraft and Wizardry. Harry makes close friends and a few enemies during his first year at the school, and with the help of his friends, Harry faces an attempted comeback by the dark wizard Lord Voldemort, who killed Harry's parents, but failed to kill Harry when he was just 15 months old."));
+        books.add(new Book("The Master and Margarita", "Mikhail Bulgakov", "The story concerns a visit by the devil to the officially atheistic Soviet Union. The Master and Margarita combines supernatural elements with satirical dark comedy and Christian philosophy, defying a singular genre. Many critics consider it to be one of the best novels of the 20th century, as well as the foremost of Soviet satires."));
+        books.add(new Book("Alice's Adventures in Wonderland", "Lewis Carroll", " It tells of a young girl named Alice falling through a rabbit hole into a fantasy world populated by peculiar, anthropomorphic creatures. The tale plays with logic, giving the story lasting popularity with adults as well as with children. It is considered to be one of the best examples of the literary nonsense genre."));
+        books.add(new Book("The Hobbit", "J. R. R. Tolkien", "The story is told in the form of an episodic quest, and most chapters introduce a specific creature or type of creature of Tolkien's geography. Bilbo gains a new level of maturity, competence, and wisdom by accepting the disreputable, romantic, fey, and adventurous sides of his nature and applying his wits and common sense. The story reaches its climax in the Battle of Five Armies, where many of the characters and creatures from earlier chapters re-emerge to engage in conflict."));
+        books.add(new Book("And Then There Were None", "Agatha Christie", "On 8 August in the late 1930s, eight people arrive on a small, isolated island off the Devon coast of England. Each has an invitation tailored to his or her personal circumstances, such as an offer of employment or an unexpected late summer holiday. They are met by Thomas and Ethel Rogers, the butler and cook-housekeeper, who state that their hosts, Mr. Ulick Norman Owen and his wife Mrs. Una Nancy Owen, whom they have not yet met in person, have not arrived, but left instructions, which strikes all the guests as odd."));
+        books.add(new Book("Dream of the Red Chamber", "Cao Xueqin", "Red Chamber is believed to be semi-autobiographical, mirroring the rise and decline of author Cao Xueqin's own family and, by extension, of the Qing dynasty. As the author details in the first chapter, it is intended to be a memorial to the damsels he knew in his youth: friends, relatives and servants. The novel is remarkable not only for its huge cast of characters and psychological scope, but also for its precise and detailed observation of the life and social structures typical of 18th-century Chinese society."));
+        books.add(new Book("The Da Vinci Code", "Dan Brown", "The Da Vinci Code follows 'symbologist' Robert Langdon and cryptologist Sophie Neveu after a murder in the Louvre Museum in Paris causes them to become involved in a battle between the Priory of Sion and Opus Dei over the possibility of Jesus Christ having been a companion to Mary Magdalene. The novel explores an alternative religious history, whose central plot point is that the Merovingian kings of France were descended from the bloodline of Jesus Christ and Mary Magdalene."));
+        books.add(new Book("The Alchemist", "Paulo Coelho", "An allegorical novel, The Alchemist follows a young Andalusian shepherd in his journey to the pyramids of Egypt, after having a recurring dream of finding a treasure there."));
+        books.add(new Book("The Lion, the Witch and the Wardrobe", "C. S. Lewis", "Most of the novel is set in Narnia, a land of talking animals and mythical creatures that is ruled by the evil White Witch. In the frame story, four English children are relocated to a large, old country house following a wartime evacuation. The youngest, Lucy, visits Narnia three times via the magic of a wardrobe in a spare room. Lucy's three siblings are with her on her third visit to Narnia. In Narnia, the siblings seem fit to fulfill an old prophecy and find themselves adventuring to save Narnia and their own lives. The lion Aslan gives his life to save one of the children; he later rises from the dead, vanquishes the White Witch, and crowns the children Kings and Queens of Narnia."));
+        members.add(new Member("kurnia", "123"));
+        librarians.add(new Librarian("librarian", "123"));
+    }
+
+
+    private void start() {
 
         boolean running = true;
         System.out.println("Welcome to OOP-Java library");
@@ -48,7 +79,7 @@ public class LibraryProgram {
         }
     }
 
-    private void memberLogIn(){
+    private void memberLogIn() {
         System.out.println("Hi! Please, log in as a member to continue.. ");
         System.out.println("Enter username: ");
         String username = scanner.nextLine();
@@ -56,7 +87,7 @@ public class LibraryProgram {
         String password = scanner.nextLine();
         for (User member : members) {
             if (username.equals(member.getUserName()) && password.equals(member.getPassword())) {
-                 if (member instanceof Member) {
+                if (member instanceof Member) {
                     System.out.println("Welcome back, " + username + "!");
                     currentMember = (Member) member;
                     memberMenu();
@@ -76,12 +107,11 @@ public class LibraryProgram {
             System.out.println("2. See all the available books");
             System.out.println("3. Search for a book");
             System.out.println("4. Borrow a book");
-            System.out.println("5. My loaned books");
-            System.out.println("6. Return a book");
+            System.out.println("5. My books account");
             System.out.println("0. Save and exit");
 
 
-            String memberChoice = scanner.next();
+            String memberChoice = scanner.nextLine();
             switch (memberChoice) {
                 case "1":
                     showAllBooks(books);
@@ -90,20 +120,16 @@ public class LibraryProgram {
                     showAvailableBooks();
                     break;
                 case "3":
-                    System.out.println("Please, enter a book title or author");
                     searchForBook();
                     break;
                 case "4":
                     borrowBook();
                     break;
                 case "5":
-                    myLoanedBooks();
-                    break;
-                case "6":
-                    returnBook();
+                    currentMember.myAccount();
                     break;
                 case "0":
-                    FileUtility.writeObject(this, "saveAccount.ser");
+                    FileUtility.writeObject(this, "library.ser");
                     System.out.println("Thanks and hope to see you again!");
                     System.exit(0);
                     break;
@@ -113,28 +139,29 @@ public class LibraryProgram {
         }
     }
 
-private void showAllBooks(ArrayList<Book> books){
-for(Book book:books){
-    System.out.println(book);
-    System.out.println(book.getDescription());
-    System.out.println("---------------------------------------------------------------");
-}
-}
+    private void showAllBooks(ArrayList<Book> books) {
+        for (Book book : books) {
+            System.out.println(book);
+            System.out.println(book.getDescription());
+            System.out.println("---------------------------------------------------------------");
+        }
+    }
 
-private void showAvailableBooks(){
-for(Book book: books){
-if(book.isAvailable()){
-    System.out.println(book);
-}
-}
-}
+    private void showAvailableBooks() {
+        for (Book book : books) {
+            if (book.isAvailable()) {
+                System.out.println(book);
+            }
+        }
+    }
 
-    private void searchForBook(){
-            String searchedBook = scanner.nextLine();
+    private void searchForBook() {
+        System.out.println("Please, enter a book title or author");
+        String searchedBook = scanner.nextLine();
         Book book = currentMember.findBookByTitleAuthor(searchedBook, books);
-        if (book == null){
-            System.out.println("Sorry, " + searchedBook + "is not found.");
-        } else{
+        if (book == null) {
+            System.out.println("Sorry, " + searchedBook + " is not found.");
+        } else {
             System.out.println(book);
             System.out.println("Description: ");
             System.out.println(currentMember.findBookByTitleAuthor(searchedBook, books).getDescription());
@@ -142,82 +169,73 @@ if(book.isAvailable()){
     }
 
 
-public void borrowBook(){
-    showAvailableBooks();
-    System.out.println("Please, enter a book title or author:");
-    String titleOrAuthor = scanner.nextLine();
-    currentMember.findBookByTitleAuthor(titleOrAuthor, books);
-    currentMember.memberBorrowBook(currentMember.findBookByTitleAuthor(titleOrAuthor, books));
+    public void borrowBook() {
+        showAvailableBooks();
+        System.out.println("Please, enter a book title or author:");
+        String titleOrAuthor = scanner.nextLine();
+        currentMember.findBookByTitleAuthor(titleOrAuthor, books);
+        currentMember.memberBorrowBook(currentMember.findBookByTitleAuthor(titleOrAuthor, books));
 
-}
-
-public void myLoanedBooks() {
-
-    if (borrowedBooks.size() == 0) {
-        for (Book book : borrowedBooks) {
-            System.out.println(book);
-        }
-    } else {
-        System.out.println("You have not borrow a book, yet..");
     }
-    System.out.println("--------------");
-}
 
 
-public void returnBook() {
-    myLoanedBooks();
-    if (borrowedBooks.isEmpty()) {
-        System.out.println("Book could not be found.");
-    } else {
-        System.out.println("Which book you will return? Please, enter the book title: ");
-        String bookTitle = scanner.nextLine();
-        currentMember.memberReturnBook(currentMember.findBookByTitleAuthor(bookTitle, borrowedBooks));
-    }
-}
-
-    private void librarian () {
+    public void librarian() {
+        Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
         while (running) {
             System.out.println("Hi, librarian! \n Please, select the menu:\n");
-            System.out.println("1. Search a member");
-            System.out.println("2. Add a member");
-            System.out.println("3. See borrowed books");
-            System.out.println("4. Remove a book");
-            System.out.println("5. Add a new book");
-            System.out.println("0. Exit");
+            //System.out.println("1. Search a member");
+            //System.out.println("2. Add a member");
+            //System.out.println("3. See borrowed books");
+            System.out.println("1. Add a new book");
+            System.out.println("2. Remove a book");
+            System.out.println("0. Save and exit");
 
-        }
-
-        String librarianChoice = scanner.next();
-        switch (librarianChoice) {
-            case "1":
+            String librarianChoice = scanner.nextLine();
+            switch (librarianChoice) {
+                case "1":
+                    System.out.println("Enter Title: ");
+                    String title = scanner.nextLine();
+                    System.out.println("Enter Author: ");
+                    String author = scanner.nextLine();
+                    System.out.println("Enter Summary: ");
+                    String description = scanner.nextLine();
+                    currentLibrarian.addBookToLibrary(books, title, author, description);
+                    break;
                 //findMember(null);
-                break;
-            case "2":
-                //addMember();
-                break;
-            case "3":
-                //seeBorrowedBooks();
-                break;
-            case "4":
-                //removeBook();
-                break;
-            case "5":
-                //addNewBook();
-                break;
-            case "0":
-                System.out.println("Goodbye!");
-                break;
-            default:
-                System.out.println("Wrong input. Please, enter a number between 0 to 7");
-        }
-    }
+                case "2":
+                    currentLibrarian.printAllLibraryBooks(books);
+                    System.out.println("Enter Title: ");
+                    String bookTitleToRemove = scanner.nextLine();
+                    currentLibrarian.removeBookFromLibrary(bookTitleToRemove, books);
+                    break;
 
-private void getUsers(){
-    Path file = new File("user.ser").toPath();
+                //addMember();
+
+                case "3":
+                    //seeBorrowedBooks();
+                    break;
+                case "4":
+                    //removeBook();
+                    break;
+                case "5":
+                    //addNewBook();
+                    break;
+                case "0":
+                    System.out.println("Goodbye!");
+                    break;
+                default:
+                    System.out.println("Wrong input. Please, enter a number between 0 to 2");
+                    break;
+            }
+        }
+
+
+/*private void getUsersFromFile(){
+    Path file = new File("saveAccount.ser").toPath();
     if (Files.exists(file)) {
-        LibraryProgram libraryFromFile = (LibraryProgram) FileUtility.readObject("user.ser");
+        LibraryProgram libraryFromFile = (LibraryProgram) FileUtility.readObject("saveAccount.ser");
         this.members = libraryFromFile.members;
     } else {
         addUserToLibraryList();
@@ -226,60 +244,14 @@ private void getUsers(){
 
 private void addUserToLibraryList(){
 members.add(new Member("kurnia","123"));
+}*/
+
+
+
+
+
+    }
 }
-
-}
-
-
-  /*  //Find a certain member of the library. If not found, return null.
-    private Member findMember(String name){
-        for (Member member : members){
-            if (member.getName().equals(name)){
-                return member;
-            }
-        }
-        return null;
-    }
-
-    //Add members to the library
-    public void addMember(String userName){
-        members.add( new Member());
-    }
-
-    //Show all the loans of a certain member
-    public void showMemberLoans(String memberName) {
-        Member member = findMember(memberName);
-        if (member != null) {
-            member.showLoan();
-        }
-    }
-
-    public void seeBorrowedBooks(){
-        //loop through all members...
-        for (Member member: members){
-            showMemberLoans(member.getName()); //and show all loans for each member...
-        }
-    }
-
-    public void addNewBook(Book newBook){
-        books.add( newBook );
-    }
-
-    private void removeBook(String title, ArrayList<Book> books) {
-        Book book = findBookByTitleOrAuthor(title, books);
-        books.remove(book);
-        System.out.println(book.getTitle() + " is removed.");
-    }
-
-public void renderBookListFromFile(){
-books =(ArrayList<Book>)FileUtility.loadObject("bookList.ser");
-}
-
-public void renderMembersFromFile(){
-members =(ArrayList<Member>)FileUtility.loadObject("members.ser");
-}
-}
-*/
 
 
 
