@@ -20,19 +20,18 @@ public class User implements Serializable {
         return password;
     }
 
-Book findBookByTitleAuthor(String title, ArrayList<Book> books){
-    for(Book book:books){
-        if(book==null){
-            continue;
+    Book findBookByTitleAuthor(String title, ArrayList<Book> books) {
+        for (Book book : books) {
+            if (book == null) {
+                continue;
+            }
+            if (book.getTitle().toLowerCase().contains(title.toLowerCase()) || book.getAuthor().toLowerCase().contains(title.toLowerCase())) {
+                return book;
+            }
         }
-        if(book.getTitle().toLowerCase().contains(title.toLowerCase()) || book.getAuthor().toLowerCase().contains(title.toLowerCase())){
-            return book;
-        }
+        System.out.println("Book is not found.");
+        return null;
     }
-    System.out.println("Book is not found.");
-    return null ;
-}
-
 
 
     @Override

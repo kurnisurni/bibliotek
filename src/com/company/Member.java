@@ -29,7 +29,7 @@ public class Member extends User {
                         String bookTitle = scanner.nextLine();
                         returnBookToLibrary(findBookByTitleAuthor(bookTitle, borrowedBooks));
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("This book is not here!");
                 }
                 break;
@@ -62,16 +62,16 @@ public class Member extends User {
             book.setAvailable(false);
             System.out.println(getUserName() + " borrows a book with title " + book.getTitle());
         } else {
-            System.out.println("Error! " + getUserName()+ " could not borrow " + book.getTitle());
+            System.out.println("Error! " + getUserName() + " could not borrow " + book.getTitle());
         }
     }
 
-    Book findBookByTitleAuthor(String title, ArrayList<Book> books){
-        for(Book book:books){
-            if(book==null){
+    Book findBookByTitleAuthor(String title, ArrayList<Book> books) {
+        for (Book book : books) {
+            if (book == null) {
                 continue;
             }
-            if(book.getTitle().toLowerCase().contains(title.toLowerCase()) || book.getAuthor().toLowerCase().contains(title.toLowerCase())){
+            if (book.getTitle().toLowerCase().contains(title.toLowerCase()) || book.getAuthor().toLowerCase().contains(title.toLowerCase())) {
                 return book;
             }
         }

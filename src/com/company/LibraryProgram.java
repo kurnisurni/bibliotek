@@ -12,11 +12,12 @@ public class LibraryProgram implements Serializable {
     private ArrayList<Book> books = new ArrayList<>();
     private ArrayList<Member> members = new ArrayList<>();
     private Member currentMember;
+    private Librarian currentLibrarian;
     private transient Scanner scanner = new Scanner(System.in);
 
-public LibraryProgram(){
+    public LibraryProgram() {
         renderBookAndUser();
-start();
+        start();
     }
 
     private void renderBookAndUser() {
@@ -218,7 +219,7 @@ start();
                     String memberName = scanner.nextLine();
                     System.out.println("Enter password");
                     String memberPassword = scanner.nextLine();
-                    addMemberToLibrary(memberName,memberPassword);
+                    addMemberToLibrary(memberName, memberPassword);
                     break;
                 case "5":
                     allMembers(members);
@@ -255,11 +256,11 @@ start();
     }
 
     private Book findBookByTitleAuthor(String title, ArrayList<Book> books) {
-        for(Book book:books){
-            if(book==null){
+        for (Book book : books) {
+            if (book == null) {
                 continue;
             }
-            if(book.getTitle().toLowerCase().contains(title.toLowerCase()) || book.getAuthor().toLowerCase().contains(title.toLowerCase())){
+            if (book.getTitle().toLowerCase().contains(title.toLowerCase()) || book.getAuthor().toLowerCase().contains(title.toLowerCase())) {
                 return book;
             }
         }
@@ -291,8 +292,7 @@ start();
         return null;
     }
 
-
-    }
+}
 
 
 
