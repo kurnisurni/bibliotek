@@ -186,9 +186,12 @@ start();
         boolean isRunning = true;
         while (isRunning) {
             System.out.println("Hi, librarian! Please, select the menu: ");
-            System.out.println("1. Add new book");
-            System.out.println("2. Remove book");
+            System.out.println("1. Add a new book");
+            System.out.println("2. Remove a book");
             System.out.println("3. See all books");
+            System.out.println("4. Add a new member");
+            System.out.println("5. See all members");
+            System.out.println("6. Search a member");
             System.out.println("0. Save & Exit");
             String librarianChoice = scanner.nextLine();
             switch (librarianChoice) {
@@ -210,12 +213,28 @@ start();
                 case "3":
                     printAllLibraryBooks(libraryBooks);
                     break;
+                case "4":
+                    System.out.println("Enter a username: ");
+                    String memberName = scanner.nextLine();
+                    System.out.println("Enter password");
+                    String memberPassword = scanner.nextLine();
+                    addMemberToLibrary(memberName,memberPassword);
+                    break;
+                case "5":
+                    allMembers(members);
+                    break;
+                case "6":
+                    System.out.println("Enter the member's name: ");
+                    String libMember = scanner.nextLine();
+                    Member member = findUser(libMember, members);
+                    System.out.println(member);
+                    break;
                 case "0":
                     System.out.println("You are successfully exit the system!");
                     isRunning = false;
                     break;
                 default:
-                    System.out.println("Wrong input. Please, enter a number between 0 to 3");
+                    System.out.println("Wrong input. Please, enter a number between 0 to 6");
                     break;
             }
         }
@@ -251,6 +270,25 @@ start();
     void addBookToLibrary(ArrayList<Book> books, String title, String author, String description) {
         books.add(new Book(title, author, description));
         System.out.println(title + " added to library collection");
+    }
+
+    void addMemberToLibrary(String memberName, String memberPassword) {
+        members.add(new Member(memberName, memberPassword));
+        System.out.println(memberName + " added to the library systema");
+    }
+
+    public void allMembers(ArrayList<Member> members) {
+        for (Member member : members) {
+            System.out.println(member);
+        }
+    }
+
+    public Member findUser(String libMember, ArrayList<Member> members) {
+        for (Member member : members) {
+            if (member.getUserName().toLowerCase().equals(libMember.toLowerCase()))
+                return member;
+        }
+        return null;
     }
 
 
