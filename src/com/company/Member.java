@@ -20,14 +20,18 @@ public class Member extends User {
                 showBorrowedBooks();
                 break;
             case "2":
+                try {
                     showBorrowedBooks();
                     if (borrowedBooks.isEmpty()) {
                         break;
-                    } else{
-                    System.out.println("Enter title of the book you wish to return: ");
-                    String bookTitle = scanner.nextLine();
-                    returnBookToLibrary(findBookByTitleAuthor(bookTitle, borrowedBooks));
+                    } else {
+                        System.out.println("Enter title of the book you wish to return: ");
+                        String bookTitle = scanner.nextLine();
+                        returnBookToLibrary(findBookByTitleAuthor(bookTitle, borrowedBooks));
                     }
+                } catch (Exception e){
+                    System.out.println("This book is not here!");
+                }
                 break;
             default:
                 System.out.println("Wrong input. Please, enter 1 or 2");
